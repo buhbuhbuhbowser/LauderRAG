@@ -37,6 +37,7 @@ if prompt := st.chat_input("What is up?"):
     )
 
     chunk_1_chunk_index = int(results['matches'][0].metadata['text_chunk_index'])
+    print("chunk indexes")
     print(chunk_1_chunk_index)
     chunk_2_chunk_index = int(results['matches'][1].metadata['text_chunk_index'])
     print(chunk_2_chunk_index)
@@ -77,6 +78,8 @@ if prompt := st.chat_input("What is up?"):
     #print(user_message)
     #print(system_message)
     #print("aggregated_chunk")
+    x = ("prompt: "+prompt +'n').encode()
+    os.write(1, x)
 
     messages = [
         {'role': 'system', 'content': system_message},
