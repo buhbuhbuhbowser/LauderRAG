@@ -27,11 +27,11 @@ if prompt := st.chat_input("What is up?"):
 
     query_embedding = OpenAIclient.embeddings.create(input=[prompt], model="text-embedding-3-large")
 
-    pinecone_index = pinecone.Index('test-index-1')
+    pinecone_index = pinecone.Index('lauderrag-index-3')
     results = pinecone_index.query(
         namespace="ns1",
         vector=query_embedding.data[0].embedding,
-        top_k=3,
+        top_k=10,
         include_values=False,
         include_metadata=True
     )
@@ -50,12 +50,18 @@ if prompt := st.chat_input("What is up?"):
     Mongoclient = pymongo.MongoClient(connectionstring)
     collection = Mongoclient['LauderRAG']['questionized_results']
 
-    for doc in Mongoclient['LauderRAG']['questionized_results'].find():
-        questionized_result = doc['data']
+    questionized_result = Mongoclient['LauderRAG']['questionized_results'].find_one({'_id': "LauderRAG_fakenames"})['data']
+
+    # for doc in Mongoclient['LauderRAG']['questionized_results'].find():
+    #     questionized_result = doc['data']
 
     chunk_1 = questionized_result[chunk_1_chunk_index]["original"]
     chunk_2 = questionized_result[chunk_2_chunk_index]["original"]
     chunk_3 = questionized_result[chunk_3_chunk_index]["original"]
+
+    questionNext1 = questionized_result[chunk_1_chunk_index]["processed_newlined"][2]
+    questionNext2 = questionized_result[chunk_2_chunk_index]["processed_newlined"][0]
+    questionNext3 = questionized_result[chunk_3_chunk_index]["processed_newlined"][0]
 
     aggregated_chunk = chunk_1
     if chunk_1_chunk_index == chunk_2_chunk_index:
@@ -64,9 +70,9 @@ if prompt := st.chat_input("What is up?"):
         print("Different chunk")
         aggregated_chunk = chunk_1 + " " + chunk_2 + " " + chunk_3
 
-    user_message = prompt + "Please create a balanced view, rather than leaning towards giving a direct answer to this question.  Please reference specific chat messages and answer the question, but redact the names of the students. Please err on the side of giving more context information, and reference that, and also redact names. It's best if you include the conversation in its entirety rather than selected bits and pieces, while redacting names. Please include all side of the debate. Please redact all names."
+    user_message = prompt + "Please create a balanced view, rather than leaning towards giving a direct answer to this question.  Please reference specific chat messages and answer the question. Please err on the side of giving more context information, and reference that. It's best if you include the conversation in its entirety rather than selected bits and pieces. Please include all side of the debate"
 
-    system_message = "This is a transcript of a chat conversation between Lauder students in the 2024-2025 groupchat. Please answer questions and reference specific parts of the chat history, quoting people (with names anonymized) and messages directly. " + aggregated_chunk
+    system_message = "This is a transcript of a chat conversation between Lauder students in the 2024-2025 groupchat. Please answer questions and reference specific parts of the chat history, quoting people and messages directly. " + aggregated_chunk
 
     print(user_message)
     print(system_message)
