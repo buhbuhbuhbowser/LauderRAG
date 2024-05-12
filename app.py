@@ -2,6 +2,7 @@ import streamlit as st
 from openai import OpenAI
 from pinecone import Pinecone
 import os
+import logging
 
 st.title("Chat with Lauder 24-25!")
 
@@ -80,6 +81,10 @@ if prompt := st.chat_input("What is up?"):
     #print("aggregated_chunk")
     x = ("prompt: "+prompt +'n').encode()
     os.write(1, x)
+
+    logging.basicConfig(level=logging.INFO)
+    logging.info(x)
+    logging.info("blabhasdfadsf")
 
     messages = [
         {'role': 'system', 'content': system_message},
