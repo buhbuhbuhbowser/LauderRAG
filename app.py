@@ -74,9 +74,9 @@ if prompt := st.chat_input("What is up?"):
 
     system_message = "This is a transcript of a chat conversation between Lauder students in the 2024-2025 groupchat. Please answer questions and reference specific parts of the chat history, quoting people and messages directly. " + aggregated_chunk
 
-    print(user_message)
-    print(system_message)
-    print(aggregated_chunk)
+    #print(user_message)
+    #print(system_message)
+    #print("aggregated_chunk")
 
     messages = [
         {'role': 'system', 'content': system_message},
